@@ -19,7 +19,7 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 
-//import com.puzzle.utils.Shuffle1;
+//import com.puzzle.utils.Shuffle1; //(needed on Eclipse, commented for Net Beans)
 
 import java.math.*;
 import java.util.Arrays;
@@ -28,21 +28,22 @@ import java.util.Collections;
 public class PuzzleGUI extends JFrame implements ActionListener {
     static Integer[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 0 };
     int inversions;
+    int moveCount = 0;
     int arr[] = new int[9];
     JButton tiles[][] = new JButton[3][3];
     JButton shufflebtn = new JButton("SHUFFLE");
     JButton solutionbtn = new JButton("SOLUTION");
     JButton resultbtn = new JButton("RESULT");
-    JTextArea dis = new JTextArea(100,170);
+    JTextArea dis = new JTextArea(100, 170);
     JScrollPane scroll = new JScrollPane(dis);
     int puz[][] = new int[3][3];
     int i, j, bx, by;
     JPanel p = new JPanel();
     Border bd = new LineBorder(Color.DARK_GRAY);
     Font font = new Font("Serif", Font.BOLD, 70);
-    Font shufflebtnFont=new Font("Serif",Font.PLAIN, 10);
-    Font solutionbtnFont=new Font("Serif",Font.PLAIN, 10);
-    Font resultbtnFont=new Font("Serif",Font.PLAIN, 10);
+    Font shufflebtnFont = new Font("Serif", Font.PLAIN, 10);
+    Font solutionbtnFont = new Font("Serif", Font.PLAIN, 10);
+    Font resultbtnFont = new Font("Serif", Font.PLAIN, 10);
 
     public PuzzleGUI() {
         puz = Shuffle1.config(data);
@@ -53,11 +54,19 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         }
 
         inversions = Shuffle1.getinversions(arr);
-        if (inversions % 2 != 0)
-            dis.setText("unsolvable");
+        if (inversions % 2 != 0) {
+            dis.setLineWrap(true);
+            dis.setText("Unsolvable. \nShuffle Again.");
+        //shufflebtn.setEnabled(true);
+            shufflebtn.setText("SHUFFLE");
+        }
 
-        else
-            dis.setText("solvable");
+        else {
+            dis.setLineWrap(true);
+            dis.setText("Solvable. \nStart Playing.");
+        //shufflebtn.setEnabled(false);
+            shufflebtn.setText("NEW GAME");
+        }
 
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
@@ -85,15 +94,15 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         tiles[bx][by].setBackground(Color.WHITE);
         tiles[bx][by].setText("");
         p.setLayout(null);
-        
+
         add(p);
         p.add(shufflebtn);
         p.add(solutionbtn);
         p.add(resultbtn);
-        //p.add(dis);
-        
+        // p.add(dis);
+
         dis.setEditable(false);
-        //dis.setText("Hi");
+        // dis.setText("Hi");
         shufflebtn.setBounds(312, 182, 100, 30);
         shufflebtn.setFont(shufflebtnFont);
         shufflebtn.setBackground(Color.black);
@@ -105,14 +114,80 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         resultbtn.setFont(resultbtnFont);
         resultbtn.setForeground(Color.WHITE);
         resultbtn.setBackground(Color.RED);
+
+        shufflebtn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                puz = Shuffle1.config(data);
+
+                int k = 0;
+                for (Integer x : data) {
+                    arr[k++] = x.intValue();
+                }
+
+                inversions = Shuffle1.getinversions(arr);
+                if (inversions % 2 != 0) {
+                    dis.setLineWrap(true);
+                    dis.setText("Unsolvable. \nShuffle Again.");
+                //shufflebtn.setEnabled(true);
+                    shufflebtn.setText("SHUFFLE");
+                }
+                else {
+                    dis.setLineWrap(true);
+                    dis.setText("Solvable. \nStart Playing.");
+                //shufflebtn.setEnabled(false);
+                shufflebtn.setText("NEW GAME");
+                }
+
+                for (i = 0; i < 3; i++) {
+                    for (j = 0; j < 3; j++) {
+
+                        tiles[i][j].setText("" + puz[i][j]);
+                        tiles[i][j].setBorder(bd);
+                        tiles[i][j].setBackground(Color.YELLOW);
+                        tiles[i][j].setForeground(Color.BLUE);
+                        tiles[i][j].setFont(font);
+                        tiles[i][j].setBounds(100 * j, 100 * i, 100, 100); // x,y,w,h
+
+                        tiles[i][j].setFocusPainted(false);
+                        p.add(tiles[i][j]);
+                    }
+                }
+
+                for (i = 0; i < 3; i++) {
+                    for (j = 0; j < 3; j++) {
+                        if (puz[i][j] == 0) {
+                            bx = i;
+                            by = j;
+                        }
+                    }
+                }
+                tiles[bx][by].setBackground(Color.WHITE);
+                tiles[bx][by].setText("");
+
+            }
+        });
+
+       resultbtn.addActionListener(new ActionListener() {
         
-        setSize(430, 328);     
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //activated only when game is complete
+            dis.setText("");
+            dis.setText("" + moveCount);
+            moveCount=0;
+        }
+    });
         
+        setSize(430, 328);
+
         scroll.setBounds(312, 5, 100, 170);
         p.add(scroll);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        
+
         setResizable(false);
         setTitle("8 Puzzle");
         setLocationRelativeTo(null);
@@ -134,6 +209,9 @@ public class PuzzleGUI extends JFrame implements ActionListener {
                         tx = puz[x][y];
                         puz[x][y] = puz[bx][by];
                         puz[bx][by] = tx;
+                        
+                        moveCount++;
+                        System.out.println(moveCount);
 
                         tiles[bx][by].setText("" + puz[bx][by]);
                         tiles[bx][by].setBackground(Color.YELLOW);
