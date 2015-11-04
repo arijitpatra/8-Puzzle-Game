@@ -20,10 +20,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 
 //import com.puzzle.utils.Shuffle1;
+
 import java.math.*;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class PuzzleGUI extends JFrame implements ActionListener {
     static Integer[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 0 };
+    int inversions;
+    int arr[] = new int[9];
     JButton tiles[][] = new JButton[3][3];
     JButton shufflebtn = new JButton("SHUFFLE");
     JButton solutionbtn = new JButton("SOLUTION");
@@ -38,9 +43,22 @@ public class PuzzleGUI extends JFrame implements ActionListener {
     Font shufflebtnFont=new Font("Serif",Font.PLAIN, 10);
     Font solutionbtnFont=new Font("Serif",Font.PLAIN, 10);
     Font resultbtnFont=new Font("Serif",Font.PLAIN, 10);
-    public PuzzleGUI() {
 
+    public PuzzleGUI() {
         puz = Shuffle1.config(data);
+
+        int k = 0;
+        for (Integer x : data) {
+            arr[k++] = x.intValue();
+        }
+
+        inversions = Shuffle1.getinversions(arr);
+        if (inversions % 2 != 0)
+            dis.setText("unsolvable");
+
+        else
+            dis.setText("solvable");
+
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
 
@@ -67,7 +85,7 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         tiles[bx][by].setBackground(Color.WHITE);
         tiles[bx][by].setText("");
         p.setLayout(null);
-
+        
         add(p);
         p.add(shufflebtn);
         p.add(solutionbtn);
@@ -75,7 +93,7 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         //p.add(dis);
         
         dis.setEditable(false);
-        dis.setText("Hi");
+        //dis.setText("Hi");
         shufflebtn.setBounds(312, 182, 100, 30);
         shufflebtn.setFont(shufflebtnFont);
         shufflebtn.setBackground(Color.black);
@@ -88,9 +106,7 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         resultbtn.setForeground(Color.WHITE);
         resultbtn.setBackground(Color.RED);
         
-        setSize(430, 328);
-          
-       
+        setSize(430, 328);     
         
         scroll.setBounds(312, 5, 100, 170);
         p.add(scroll);
@@ -98,7 +114,7 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         
         setResizable(false);
-        setTitle("8 Puzzle Game");
+        setTitle("8 Puzzle");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -147,3 +163,4 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         new PuzzleGUI();
     }
 }
+
