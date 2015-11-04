@@ -189,7 +189,7 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         setResizable(false);
-        setTitle("8 Puzzle");
+        setTitle("8 Puzzle Game");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
