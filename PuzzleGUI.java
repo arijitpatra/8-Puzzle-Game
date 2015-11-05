@@ -176,7 +176,7 @@ public class PuzzleGUI extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             //activated only when game is complete
             dis.setText("");
-            dis.setText("" + moveCount);
+            dis.setText("RESULT \nMoves: " + moveCount);
             moveCount=0;
         }
     });
